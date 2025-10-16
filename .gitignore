@@ -1,0 +1,35 @@
+# Data files (too large for GitHub)
+data/raw/*
+data/processed/*
+data/outputs/*
+
+# Keep folder structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/outputs/.gitkeep
+
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
