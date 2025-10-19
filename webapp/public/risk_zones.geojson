@@ -1,0 +1,89 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "risk_level": "Very High",
+        "risk_score": 0.85,
+        "color": "#dc2626",
+        "region": "Pauri Garhwal Forest"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.7, 29.9],
+            [78.7, 30.3],
+            [79.1, 30.3],
+            [79.1, 29.9],
+            [78.7, 29.9]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "risk_level": "High",
+        "risk_score": 0.65,
+        "color": "#f97316",
+        "region": "Tehri Forest Area"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.3, 30.2],
+            [78.3, 30.6],
+            [78.7, 30.6],
+            [78.7, 30.2],
+            [78.3, 30.2]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "risk_level": "Medium",
+        "risk_score": 0.45,
+        "color": "#fbbf24",
+        "region": "Nainital Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.3, 29.2],
+            [79.3, 29.6],
+            [79.7, 29.6],
+            [79.7, 29.2],
+            [79.3, 29.2]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "risk_level": "Low",
+        "risk_score": 0.25,
+        "color": "#84cc16",
+        "region": "Udham Singh Nagar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [79.0, 28.6],
+            [79.0, 29.0],
+            [79.4, 29.0],
+            [79.4, 28.6],
+            [79.0, 28.6]
+          ]
+        ]
+      }
+    }
+  ]
+}
