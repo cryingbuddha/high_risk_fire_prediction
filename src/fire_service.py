@@ -313,8 +313,19 @@ def root():
         "status": "active",
         "endpoints": {
             "fires": "/api/fires",
-            "health": "/health"
+            "health": "/health",
+            "config": "/api/config"
         }
+    }
+
+@app.get("/api/config")
+def get_config():
+    """Check API configuration"""
+    return {
+        "nasa_firms_key_set": bool(FIRMS_API_KEY and FIRMS_API_KEY != ""),
+        "bbox": UK_BBOX,
+        "default_days": 10,
+        "timestamp": datetime.utcnow().isoformat()
     }
 
 @app.get("/health")
@@ -322,13 +333,56 @@ def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
 
 @app.get("/api/fires")
-def get_active_fires(days: int = 7):
-    """Get active fires from last N days"""
+def get_active_fires(days: int = 10):
+    """Get active fires from last N days (default 10 days)"""
     try:
+        print(f"\n🔄 Fetching fires for last {days} days...")
         svc = FireService()
-        data = svc.save_public_json(days=days)
-        return data
+        data = svc.fetch_active_fires(days=days)
+        
+        # Classify fires by severity
+        high = []
+        medium = []
+        low = []
+        
+        for fire in data:
+            brightness = fire['brightness']
+            conf = str(fire.get('confidence', '')).lower()
+            
+            if brightness > 340 and conf == 'high':
+                fire['severity'] = 'HIGH'
+                fire['color'] = '#dc2626'
+                fire['icon'] = '🔴'
+                fire['alert'] = True
+                high.append(fire)
+            elif brightness > 320 or conf in ['high', 'nominal']:
+                fire['severity'] = 'MEDIUM'
+                fire['color'] = '#f97316'
+                fire['icon'] = '🟠'
+                fire['alert'] = False
+                medium.append(fire)
+            else:
+                fire['severity'] = 'LOW'
+                fire['color'] = '#eab308'
+                fire['icon'] = '🟡'
+                fire['alert'] = False
+                low.append(fire)
+        
+        result = {
+            'total': len(data),
+            'fires': data,
+            'high': high,
+            'medium': medium,
+            'low': low,
+            'last_updated': datetime.utcnow().isoformat() + "Z",
+            'api_key_set': bool(FIRMS_API_KEY and FIRMS_API_KEY != "")
+        }
+        
+        print(f"✅ Returning {result['total']} fires: 🔴{len(high)} 🟠{len(medium)} 🟡{len(low)}")
+        return result
+        
     except Exception as e:
+        print(f"❌ Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
