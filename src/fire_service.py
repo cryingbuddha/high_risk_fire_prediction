@@ -281,6 +281,56 @@ class FireService:
         
         return out
 
+# FastAPI Application for Railway Deployment
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+
+app = FastAPI(
+    title="Uttarakhand Fire Monitoring API",
+    description="Real-time wildfire detection and risk assessment for Uttarakhand",
+    version="1.0.0"
+)
+
+# CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://*.vercel.app",
+        "https://uttarakhand-fire-monitor-ohujk4fas.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def root():
+    return {
+        "message": "Uttarakhand Fire Monitoring API",
+        "status": "active",
+        "endpoints": {
+            "fires": "/api/fires",
+            "health": "/health"
+        }
+    }
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+
+@app.get("/api/fires")
+def get_active_fires(days: int = 7):
+    """Get active fires from last N days"""
+    try:
+        svc = FireService()
+        data = svc.save_public_json(days=days)
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
-    svc = FireService()
-    svc.save_public_json(days=10)  # Changed from 7 to 14
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
