@@ -5,43 +5,48 @@ import Statistics from './Statistics';
 import AlertSystem from './AlertSystem';
 
 export default function Dashboard() {
-
-
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const [activeTab, setActiveTab] = useState('map');
   const [fireData, setFireData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchFires = async () => {
-    try {
-      // Try backend API first
-      const response = await fetch(`${API_URL}/api/active-fires`);
-      if (response.ok) {
-        const data = await response.json();
-        setFires(data.features || []);
-      } else {
-        // Fallback to local JSON
-        const localResponse = await fetch('/active_fires.json');
-        const data = await localResponse.json();
-        setFires(data.features || []);
-      }
-    } catch (error) {
-      console.error('Error fetching fires:', error);
-      // Fallback to local JSON
+  useEffect(() => {
+    const fetchFires = async () => {
       try {
-        const localResponse = await fetch('/active_fires.json');
-        const data = await localResponse.json();
-        setFires(data.features || []);
-      } catch (fallbackError) {
-        console.error('Fallback failed:', fallbackError);
+        setLoading(true);
+        // Try backend API first
+        const response = await fetch(`${API_URL}/api/fires`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('API Response:', data);
+          setFireData(data);
+          setLoading(false);
+        } else {
+          // Fallback to local JSON
+          const localResponse = await fetch('/active_fires.json');
+          const data = await localResponse.json();
+          setFireData(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching fires:', error);
+        // Fallback to local JSON
+        try {
+          const localResponse = await fetch('/active_fires.json');
+          const data = await localResponse.json();
+          setFireData(data);
+          setLoading(false);
+        } catch (fallbackError) {
+          console.error('Fallback failed:', fallbackError);
+          setLoading(false);
+        }
       }
-    }
-  };
+    };
 
     fetchFires();
-    const interval = setInterval(fetchFires, 3 * 60 * 60 * 1000);
+    // Refresh every 30 minutes
+    const interval = setInterval(fetchFires, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
