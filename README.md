@@ -12,6 +12,8 @@
 
 This system combines **real-time satellite fire detection** from NASA FIRMS with **machine learning risk predictions** to provide comprehensive wildfire monitoring for Uttarakhand state, India.
 
+web link - https://uttarakhand-fire-monitor-uq2ess7qs.vercel.app/
+
 ### **Key Features:**
 
 ✅ **Real-Time Fire Detection** - NASA VIIRS satellite data updated every 3 hours  
@@ -81,12 +83,6 @@ npm install
 npm run dev
 ```
 
-### 5. Open Browser
-```
-http://localhost:5173
-```
-
----
 
 ## 📊 System Architecture
 
